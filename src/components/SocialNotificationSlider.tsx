@@ -1,8 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
+import { waLink } from "@/lib/store";
 
-type Platform = "facebook" | "tiktok" | "instagram";
+type Platform = "facebook" | "tiktok" | "instagram" | "whatsapp";
 
 type SocialPrompt = {
   platform: Platform;
@@ -15,15 +17,21 @@ const PROMPTS: SocialPrompt[] = [
   { platform: "facebook", link: "https://www.facebook.com/rushwearpk" },
   { platform: "tiktok", link: "https://www.tiktok.com/@rushwearpk?_r=1&_t=ZS-98jZhKVekKK" },
   { platform: "instagram", link: "https://www.instagram.com/rushwear.pk?igsh=NTNqODFhMGw1aGow" },
+  {
+    platform: "whatsapp",
+    link: waLink(encodeURIComponent("Hi rushwear PK! I want a customised shirt.")),
+  },
 ];
 
 const PLATFORM_STYLES: Record<Platform, { color: string; background: string; label: string }> = {
   facebook: { color: "text-white", background: "bg-[#1877f2]", label: "Facebook" },
   tiktok: { color: "text-white", background: "bg-black", label: "TikTok" },
   instagram: { color: "text-white", background: "bg-gradient-to-br from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]", label: "Instagram" },
+  whatsapp: { color: "text-white", background: "bg-[#25d366]", label: "WhatsApp" },
 };
 
 const PlatformIcon = ({ platform }: { platform: Platform }) => {
+  if (platform === "whatsapp") return <WhatsAppIcon size={32} />;
   if (platform === "instagram") {
     return (
       <svg viewBox="0 0 24 24" className="h-8 w-8" aria-hidden="true">
@@ -116,11 +124,15 @@ export default function SocialNotificationSlider() {
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-medium uppercase tracking-wider text-[#dcae2d]">Connect</p>
                 <p className="truncate font-display text-base font-normal text-white">
-                  Join {BRAND_NAME} on {style.label}
+                  {active.platform === "whatsapp"
+                    ? "Customised shirt? Contact us"
+                    : `Join ${BRAND_NAME} on ${style.label}`}
                 </p>
-                <p className="text-xs text-gray-400">{BRAND_NAME} Official</p>
+                <p className="text-xs text-gray-400">
+                  {active.platform === "whatsapp" ? "Chat on WhatsApp" : `${BRAND_NAME} Official`}
+                </p>
                 <span className="mt-2 block rounded-md bg-[#c89416] px-3 py-1 text-center text-xs font-normal text-black">
-                  Join Now
+                  {active.platform === "whatsapp" ? "Contact us" : "Join Now"}
                 </span>
               </div>
               <button
